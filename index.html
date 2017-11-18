@@ -1,0 +1,237 @@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<!-- Bootstrap Link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+<!-- styling for html -->
+<style>
+	body {
+		font-family: 'Open Sans', sans-serif;
+	}
+	.main-button-container {
+		font-size: 32px;
+		margin-top: 175px;
+		max-width: 410px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.container {
+		color: yellow;
+	}  
+	#title {
+ 		font-size: 50px;
+ 		padding: 10px;
+ 		border: solid yellow 4px;
+	}
+	.timer {
+		color: yellow;
+		font-size: 26px;
+
+	}
+	#question {
+		font-size:34px;
+	}
+	.table {
+    	border-radius: 5px;
+    	width: 75%;
+    	margin: 0px auto;
+    	float: none;
+    	border: solid yellow 3px;
+ 	}
+ 	#tbod {
+ 		font-size: 24px;
+	}
+.main-button-container {
+  margin-top: 175px;
+  max-width: 610px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.answer: hover {
+  background: yellow;
+}
+.answer {
+  padding-top: 7px;
+  height: 45px;
+  width: 350px;
+  color: yellow;
+  padding-left: 14px;
+  background-color: black;
+  border-radius: 4px;
+}
+.first-answer {
+  margin-top: 40px;
+}
+.reset-button {
+  margin-top: 40px;
+}
+</style>
+<!-- html body -->
+<body background = "https://cdn.slidesharecdn.com/ss_thumbnails/blankjeopardytemplate1repaired-101104195539-phpapp02-thumbnail-4.jpg?cb=1422617858">
+	<div class="text-center container">
+		<h1 id="title">The Totally Trivial Trivia Game!</h1>
+	</div>
+	<br>
+	<br>
+	<br>
+	<div class="mainArea">
+	  <div class="text-center timer">
+		<p>
+		  Time Remaining:  <span id="countdownTimer">20 </span> Seconds
+		</p>
+	  </div>
+	  <br>
+	  <div class="container">
+		<table class="table table-hover">
+			<thead id="question">
+				<tr>
+				  <th>Question???</th> <!-- placeholder -->
+				</tr>
+			</thead>
+		  	<tbody id="tbod">
+		  		<tr>
+				  <td id="choiceOne">1</td>  <!-- placeholder -->
+				</tr>
+				<tr>
+				  <td id="choiceTwo">2</td>  <!-- placeholder -->
+				</tr>
+				<tr>
+				  <td id="choiceThree">3</td>  <!-- placeholder -->
+				</tr>
+				<tr>
+				  <td id="choiceFour">4</td>  <!-- placeholder -->
+				</tr>
+			</tbody>
+		</table>
+	  </div>
+	</div>
+</body>
+
+<!-- jquery links -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type=text/javascript>
+
+// set 8 sets of question array, answer choice array, and answer key arrays
+var questionArray = ["What is the name of Costco's in-house brand?", "How many teams currently make up the National Basketball Association?", "How many legs does a centipede have?", "What is the capital of West Virginia?", "Who was the US President during the Korean War?", "What is the name of Starbucks' house Dark Roast Coffee?", "A men's size US 11 sneaker is equivalent to what size men's sneaker in the UK?", "What is the third most populous city in America?"];
+
+var answerArray = [["Member's Club", "Balthazar", "America's Choice", "Kirkland"], ["30","32","34","36"], ["1000", "102", "1002", "100"], ["Concord","Charleston","Columbia","Columbus"], ["JFK", "Eisenhower", "Roosevelt", "Truman"], ["Blonde","Gold Coast","Pike","Dark"], ["UK 10", "UK 10.5", "UK 11.5", "UK 11"], ["Houston","Chicago","Los Angeles","Philadelphia"]];
+
+var answerKey = ["D. Kirkland", "A. 30", "D. 100", "B. Charleston", "D. Truman", "C. Pike", "B. UK 10.5", "C. Chicago"];
+
+var startPage;
+var gameHTML;
+var counter = 20;
+var questionCounter = 0;
+var selectedAnswer;
+var answerTimer;
+var rightCounter = 0;
+var wrongCounter = 0;
+var noAnswer = 0;
+
+$(document).ready(function() {
+
+// starting page and start button 
+  function titlePage() {
+  	startPage = "<p class='text-center main-button-container'><a class='btn btn-primary btn-lg btn-block start-button' href='#' role='button'>Start Quiz</a></p>";
+	$(".mainArea").html(startPage);
+  }
+  titlePage();
+
+// create new page upon click of start button
+$("body").on("click", ".start-button", function(event) {
+	createPage();
+	timer();
+})
+
+// click answer choice and compare with answer key. count right and wrong answers
+$("body").on("click", ".answer", function(event) {
+	selectedAnswer = $(this).text();
+	if(selectedAnswer === answerKey[questionCounter]) {
+		clearInterval(answerTimer);
+		rightCounter++;
+		gameHTML = "<p class='text-center timer'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>Correct! The answer is: " + correctAnswers[questionCounter] + "</p>" + imageArray[questionCounter];
+		$(".mainArea").html(gameHTML);
+		setTimeout(countdown, 4000);
+	}
+	else {
+		clearInterval(answerTimer);
+		wrongCounter++;
+		gameHTML = "<p class='text-center timer'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>Wrong! The correct answer is: "+ correctAnswers[questionCounter] + "</p>" + "<img class='center-block img-wrong' src='img/x.png'>";
+		$(".mainArea").html(gameHTML);
+		setTimeout(countdown, 4000);
+	}
+});
+
+// reset
+$("body").on("click", ".reset-button", function(event) {
+	resetGame();
+});
+
+});
+
+
+
+
+// run out of time loss
+function timeoutLoss() {
+	noAnswer++;
+	gameHTML = "<p class='text-center timer'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>You ran out of time!  The correct answer was: " + correctAnswers[questionCounter] + "</p>" + "<img class='center-block img-wrong' src='img/x.png'>";
+	$(".mainArea").html(gameHTML);
+	setTimeout(countdown, 4000); 
+}
+
+// open new page with fresh timer and display next set of questions and answers
+function createPage() {
+	gameHTML = "<p class='text-center timer'>Time Remaining: <span class='timer'>20</span></p><p class='text-center'>" + questionArray[questionCounter] + "</p><p class='first-answer answer'>A. " + answerArray[questionCounter][0] + "</p><p class='answer'>B. "+answerArray[questionCounter][1]+"</p><p class='answer'>C. "+answerArray[questionCounter][2]+"</p><p class='answer'>D. "+answerArray[questionCounter][3]+"</p>";
+	$(".mainArea").html(gameHTML);
+}
+
+// question counter
+function countdown() {
+	if (questionCounter < 8) {
+	questionCounter++;
+	createPage();
+	counter = 0;
+	timer();
+	}
+	else {
+		endGame();
+	}
+}
+
+// descending question timer
+function timer() {
+	answerTimer = setInterval(countdownTimer, 1000);
+	function countdownTimer() {
+		if (counter === 0) {
+			clearInterval(answerTimer);
+			timeoutLoss();
+		}
+		if (counter > 0) {
+			counter--;
+		}
+		$(".countdownTimer").html(counter);
+	}
+}
+
+// end of game final page
+function endGame() {
+	gameHTML = "<p class='text-center timer'>Time Remaining: <span class='timer'>" + counter + "</span></p>" + "<p class='text-center'>RESULTS: " + "</p>" + "<p class='
+	'>You answered " + rightCounter + "correct!</p>" + "<p>You answered " + wrongCounter + "incorrectly!</p>" + "<p>You failed to answer " + noAnswer + "</p>" + "<p class='text-center reset-button-container'><a class='btn btn-primary btn-lg btn-block reset-button' href='#' role='button'>Reset The Quiz!</a></p>";
+	$(".mainArea").html(gameHTML);
+}
+
+// reset function
+function resetGame() {
+	questionCounter = 0;
+	rightCounter = 0;
+	wrongCounter = 0;
+	noAnswer = 0;
+	counter = 20;
+	createPage();
+	timer();
+}
+
+</script>
+</html>
